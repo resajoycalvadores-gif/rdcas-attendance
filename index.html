@@ -1,847 +1,410 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RDCAS QR Student Attendance System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RDCAS QR Attendance System</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
-
-body {
-    background: linear-gradient(135deg, #eef7f1, #d8ebd9, #f8fbf9);
-    color: #222;
-    min-height: 100vh;
-}
-
-header {
-    background: linear-gradient(135deg, #176b3a, #0c4d29);
-    color: white;
-    text-align: center;
-    padding: 25px 15px;
-}
-
-header h1 { font-size: 24px; }
-header p { margin-top: 8px; }
-
-nav {
-    background: #0b4525;
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    padding: 12px;
-}
-
-nav button, .primary {
-    border: 0;
-    border-radius: 8px;
-    padding: 11px 16px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-nav button {
-    background: white;
-    color: #176b3a;
-}
-
-nav button:hover { background: #bcebc9; }
-
-.container {
-    max-width: 1050px;
-    margin: 24px auto;
-    padding: 0 14px;
-}
-
-.section { display: none; }
-.section.active { display: block; }
-
-.card {
-    background: white;
-    padding: 24px;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px #00000012;
-    margin-bottom: 18px;
-    border: 1px solid #dce9df;
-}
-
-h2 {
-    color: #176b3a;
-    margin-bottom: 14px;
-}
-
-p { line-height: 1.5; }
-
-.features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
-    margin-top: 15px;
-}
-
-.feature {
-    background: #f0f9f3;
-    padding: 15px;
-    border-left: 4px solid #176b3a;
-    border-radius: 8px;
-}
-
-label {
-    display: block;
-    font-weight: bold;
-    color: #176b3a;
-    margin: 12px 0 6px;
-}
-
-input, select {
-    width: 100%;
-    padding: 11px;
-    border: 1px solid #cbd8cf;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    background: #fbfdfb;
-}
-
-.primary {
-    background: #176b3a;
-    color: white;
-    margin-top: 8px;
-}
-
-.primary:hover { background: #0c4d29; }
-
-#qrCard { text-align: center; }
-
-#qrcode {
-    margin: 18px auto;
-    width: 190px;
-    min-height: 180px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: white;
-}
-
-#reader {
-    max-width: 450px;
-    margin: 18px auto;
-    border: 2px dashed #176b3a;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.verification {
-    text-align: center;
-    padding: 16px;
-    border-radius: 10px;
-    margin-top: 15px;
-    display: none;
-    line-height: 1.7;
-}
-
-.verified {
-    display: block;
-    background: #dff6e5;
-    color: #176b3a;
-    border: 1px solid #a9dfb8;
-}
-
-.invalid {
-    display: block;
-    background: #ffe3e3;
-    color: #a00020;
-    border: 1px solid #f1aaaa;
-}
-
-.table-container {
-    overflow-x: auto;
-    margin-top: 12px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 650px;
-    font-size: 14px;
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
-}
-
-th {
-    background: #176b3a;
-    color: white;
-}
-
-tr:nth-child(even) { background: #f5faf6; }
-
-.small-note {
-    color: #56675c;
-    font-size: 13px;
-    margin-top: 8px;
-}
-
-footer {
-    text-align: center;
-    padding: 18px;
-    color: #557061;
-    font-size: 13px;
-}
-
-@media(max-width: 600px) {
-    header { padding: 20px 12px; }
-
-    header h1 {
-        font-size: 19px;
-        line-height: 1.35;
-    }
-
-    header p { font-size: 13px; }
-
-    nav {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        gap: 6px;
-        padding: 9px 6px;
-    }
-
-    nav button {
-        flex: 1 1 42%;
-        min-height: 42px;
-        padding: 9px 7px;
-        font-size: 12px;
-    }
-
-    .container {
-        margin: 14px auto;
-        padding: 0 9px;
-    }
-
-    .card {
-        padding: 15px;
-        border-radius: 12px;
-    }
-
-    h2 { font-size: 19px; }
-
-    input, select {
-        font-size: 16px;
-        min-height: 44px;
-    }
-
-    .primary {
-        min-height: 42px;
-        padding: 10px 12px;
-    }
-
-    .table-container {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    table {
-        font-size: 12px;
-        min-width: 620px;
-    }
-
-    th, td { padding: 8px; }
-    #reader { width: 100%; }
-    #qrcode { max-width: 100%; }
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#eef7f1;color:#222}
+header{background:#176b3a;color:white;text-align:center;padding:22px 12px}
+header h1{font-size:23px;margin:0}
+header p{margin-bottom:0}
+nav{background:#0c4d29;padding:10px;display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
+button{cursor:pointer;border:0;border-radius:7px;padding:11px 14px;font-weight:bold}
+nav button{background:white;color:#176b3a}
+.container{max-width:950px;margin:18px auto;padding:0 12px}
+.section{display:none}
+.section.active{display:block}
+.card{background:white;padding:20px;margin-bottom:16px;border-radius:12px;box-shadow:0 3px 12px #0001}
+h2{color:#176b3a;margin-top:0}
+label{display:block;margin:12px 0 6px;font-weight:bold;color:#176b3a}
+input{width:100%;padding:12px;border:1px solid #bbb;border-radius:7px;font-size:16px}
+.primary{background:#176b3a;color:white;margin-top:10px}
+#qrcode{margin:18px auto;width:190px;display:flex;justify-content:center}
+#reader{width:100%;max-width:450px;margin:15px auto}
+.result{display:none;padding:14px;margin-top:12px;border-radius:8px;line-height:1.5;overflow-wrap:anywhere}
+.ok{display:block;background:#dff6e5;color:#145a2d}
+.bad{display:block;background:#ffe3e3;color:#8b0000}
+.info{display:block;background:#e7f2ff;color:#174a7e}
+.tablebox{overflow-x:auto;margin-top:12px}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:14px}
+td,th{border:1px solid #ddd;padding:9px;text-align:center}
+th{background:#176b3a;color:white}
+tr:nth-child(even){background:#f5faf6}
+.note{font-size:13px;color:#555;line-height:1.5}
+.feature{background:#f0f9f3;padding:12px;margin:8px 0;border-left:4px solid #176b3a}
+footer{text-align:center;padding:18px;color:#557061}
+@media(max-width:600px){
+ header h1{font-size:19px}
+ nav button{flex:1 1 40%;font-size:12px;padding:10px 5px}
+ .card{padding:15px}
 }
 </style>
 </head>
-
 <body>
 
 <header>
-    <h1>Ricardo Dizon Canlas Agricultural School</h1>
-    <p>QR Code-Based Student Verification and Attendance System</p>
+<h1>Ricardo Dizon Canlas Agricultural School</h1>
+<p>QR Code-Based Student Verification and Attendance System</p>
 </header>
 
 <nav>
-    <button onclick="showSection('about')">🏠 Home</button>
-    <button onclick="showSection('register')">📝 Register Student</button>
-    <button onclick="showSection('scan')">📷 Scan QR</button>
-    <button onclick="showSection('logs')">📋 Attendance Logs</button>
-    <button onclick="showSection('students')">👥 Student Records</button>
+<button onclick="showSection('home')">Home</button>
+<button onclick="showSection('register')">Register Student</button>
+<button onclick="showSection('scan')">Scan QR</button>
+<button onclick="showSection('logs')">Attendance Logs</button>
+<button onclick="showSection('students')">Student Records</button>
 </nav>
 
 <div class="container">
 
-    <section id="about" class="section active">
-        <div class="card">
-            <h2>🌿 Welcome to RDCAS</h2>
-            <p>
-                This system registers students, generates a QR code
-                for each student, and records attendance whenever
-                a registered student's QR code is scanned.
-            </p>
+<section id="home" class="section active">
+<div class="card">
+<h2>Welcome to RDCAS!</h2>
+<p>Register students, generate QR codes, scan student QR codes, and view attendance records.</p>
+<div class="feature"><b>Student Registration</b><br>Save student ID, name, and section.</div>
+<div class="feature"><b>QR Code</b><br>Generate a unique QR code using the student's ID.</div>
+<div class="feature"><b>QR Scanner</b><br>Use a cellphone camera to scan a registered student's QR code.</div>
+<div class="feature"><b>Attendance Logs</b><br>Search records and download them as a CSV file.</div>
+<p class="note">Test version: records are saved in the current browser and device only. This version does not synchronize data between phones and computers.</p>
+</div>
+</section>
 
-            <div class="features">
-                <div class="feature">
-                    <b>Student Registration</b><br>
-                    Save student ID, full name, and grade/section.
-                </div>
-                <div class="feature">
-                    <b>QR Code Generation</b><br>
-                    Create a QR code connected to the student's ID.
-                </div>
-                <div class="feature">
-                    <b>QR Scanner</b><br>
-                    Scan a registered student's QR code.
-                </div>
-                <div class="feature">
-                    <b>Attendance History</b><br>
-                    Review previous attendance and filter records.
-                </div>
-            </div>
+<section id="register" class="section">
+<div class="card">
+<h2>Register Student</h2>
+<form id="studentForm">
+<label for="studentID">Student ID / LRN</label>
+<input id="studentID" required placeholder="Enter student ID">
+<label for="studentName">Full Name</label>
+<input id="studentName" required placeholder="Enter full name">
+<label for="studentSection">Grade and Section</label>
+<input id="studentSection" required placeholder="Example: Grade 10 - Rizal">
+<button class="primary" type="submit">Register and Generate QR</button>
+</form>
+</div>
+<div class="card" id="qrCard" hidden>
+<h2>Student QR Code</h2>
+<p id="qrStudentName"></p>
+<div id="qrcode"></div>
+<button class="primary" onclick="printQR()">Print QR Code</button>
+</div>
+</section>
 
-            <p class="small-note">
-                Note: Records are saved in the current browser.
-                Use the same browser and device to access them.
-            </p>
-        </div>
-    </section>
+<section id="scan" class="section">
+<div class="card">
+<h2>Student QR Scanner</h2>
+<p>Press Start Camera and allow camera access when your browser asks permission.</p>
+<div id="reader"></div>
+<div id="scanResult" class="result"></div>
+<button class="primary" id="startButton" onclick="startScanner()">Start Camera / Scan QR</button>
+<button class="primary" onclick="stopScanner()">Stop Camera</button>
+<p class="note">If permission was blocked, open Chrome site settings, set Camera to Allow, and reload the page. The website must use HTTPS.</p>
+</div>
+</section>
 
-    <section id="register" class="section">
-        <div class="card">
-            <h2>📝 Register Student</h2>
+<section id="logs" class="section">
+<div class="card">
+<h2>Attendance Logs</h2>
+<label for="dateFilter">Filter by date</label>
+<input type="date" id="dateFilter">
+<label for="searchFilter">Search student ID or name</label>
+<input type="search" id="searchFilter" placeholder="Type ID or name">
+<button class="primary" onclick="clearFilters()">Show All</button>
+<button class="primary" onclick="exportLogs()">Download CSV</button>
+<div class="tablebox">
+<table>
+<thead><tr><th>Student ID</th><th>Name</th><th>Section</th><th>Action</th><th>Status</th><th>Date</th><th>Time</th></tr></thead>
+<tbody id="logTable"></tbody>
+</table>
+</div>
+</div>
+</section>
 
-            <form id="studentForm">
-                <label for="studentID">LRN / Student ID</label>
-                <input id="studentID" type="text"
-                    placeholder="Example: RDCAS-2026-0001" required>
-
-                <label for="studentName">Full Name</label>
-                <input id="studentName" type="text"
-                    placeholder="Enter student's full name" required>
-
-                <label for="studentSection">Grade & Section</label>
-                <input id="studentSection" type="text"
-                    placeholder="Example: Grade 10 - Rizal" required>
-
-                <button class="primary" type="submit">
-                    Register & Generate QR
-                </button>
-            </form>
-        </div>
-
-        <div class="card" id="qrCard" style="display:none">
-            <h2>🎫 Student QR Code</h2>
-            <p id="qrStudentName"></p>
-            <div id="qrcode"></div>
-            <p>Save or print this QR code.</p>
-            <button class="primary" onclick="window.print()">
-                Print QR / Page
-            </button>
-        </div>
-    </section>
-
-    <section id="scan" class="section">
-        <div class="card">
-            <h2 style="text-align:center">📷 Student QR Scanner</h2>
-            <p style="text-align:center">
-                Allow camera access, then scan the student's QR code.
-            </p>
-
-            <div id="reader"></div>
-            <div id="verificationResult" class="verification"></div>
-
-            <button class="primary" id="stopScanBtn" type="button"
-                onclick="stopScanner()">Stop Scanner</button>
-
-            <p class="small-note">
-                If the camera does not start, open this page using
-                HTTPS or localhost and allow camera permission.
-            </p>
-        </div>
-    </section>
-
-    <section id="logs" class="section">
-        <div class="card">
-            <h2>📋 Attendance History / Logs</h2>
-
-            <label for="dateFilter">Filter by date</label>
-            <input id="dateFilter" type="date">
-
-            <label for="searchFilter">Search student ID or name</label>
-            <input id="searchFilter" type="search"
-                placeholder="Type a student ID or name">
-
-            <button class="primary" type="button" onclick="clearFilters()">
-                Show All Records
-            </button>
-
-            <button class="primary" type="button" onclick="exportLogs()">
-                Download Logs as CSV
-            </button>
-
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Student ID / LRN</th>
-                            <th>Student Name</th>
-                            <th>Grade & Section</th>
-                            <th>Action</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logTable"></tbody>
-                </table>
-            </div>
-
-            <p class="small-note">
-                Attendance records remain in this browser unless
-                browser site data is cleared.
-            </p>
-        </div>
-    </section>
-
-    <section id="students" class="section">
-        <div class="card">
-            <h2>👥 Registered Student Records</h2>
-            <p>Search for a student and delete a record if needed.</p>
-
-            <label for="studentSearch">Search Student ID or Name</label>
-            <input type="search" id="studentSearch"
-                placeholder="Enter student ID or name"
-                oninput="displayStudents()">
-
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Student ID / LRN</th>
-                            <th>Full Name</th>
-                            <th>Grade & Section</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="studentTable"></tbody>
-                </table>
-            </div>
-
-            <p class="small-note">
-                Deleting a student removes their registration, so their QR
-                code will no longer verify. Existing attendance logs are kept.
-            </p>
-        </div>
-    </section>
+<section id="students" class="section">
+<div class="card">
+<h2>Student Records</h2>
+<label for="studentSearch">Search students</label>
+<input id="studentSearch" type="search" placeholder="Search ID or name" oninput="displayStudents()">
+<div class="tablebox">
+<table>
+<thead><tr><th>Student ID</th><th>Name</th><th>Section</th><th>Action</th></tr></thead>
+<tbody id="studentTable"></tbody>
+</table>
+</div>
+</div>
+</section>
 
 </div>
-
-<footer>
-    RDCAS QR Student Attendance System © 2026
-</footer>
+<footer>RDCAS QR Attendance System © 2026</footer>
 
 <script>
-function readStorage(key) {
-    try {
-        return JSON.parse(localStorage.getItem(key)) || [];
-    } catch (error) {
-        return [];
+"use strict";
+
+// Data stays in this browser only.
+function readData(key){
+    try{
+        const data=JSON.parse(localStorage.getItem(key)||"[]");
+        return Array.isArray(data)?data:[];
+    }catch(e){return [];}
+}
+let students=readData("students");
+let logs=readData("verificationLogs");
+let scanner=null;
+let starting=false;
+let lastID="";
+let lastTime=0;
+
+function saveStudents(){
+    localStorage.setItem("students",JSON.stringify(students));
+}
+function saveLogs(){
+    localStorage.setItem("verificationLogs",JSON.stringify(logs));
+}
+
+function showSection(id){
+    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    if(id!=="scan") stopScanner();
+    if(id==="logs") displayLogs();
+    if(id==="students") displayStudents();
+}
+
+function message(text,type){
+    const el=document.getElementById("scanResult");
+    el.className="result "+type;
+    el.textContent=text;
+}
+
+// Register and create QR
+document.getElementById("studentForm").addEventListener("submit",function(e){
+    e.preventDefault();
+    const id=document.getElementById("studentID").value.trim();
+    const name=document.getElementById("studentName").value.trim();
+    const section=document.getElementById("studentSection").value.trim();
+
+    if(students.some(s=>String(s.id).toLowerCase()===id.toLowerCase())){
+        alert("This Student ID is already registered.");
+        return;
     }
-}
-
-let students = readStorage("students");
-let logs = readStorage("verificationLogs");
-
-let scanner = null;
-let scannerStarting = false;
-let lastScannedId = "";
-let lastScannedAt = 0;
-
-function saveStudents() {
-    localStorage.setItem("students", JSON.stringify(students));
-}
-
-function saveLogs() {
-    localStorage.setItem("verificationLogs", JSON.stringify(logs));
-}
-
-function showSection(sectionID) {
-    document.querySelectorAll(".section").forEach(section => {
-        section.classList.remove("active");
-    });
-
-    document.getElementById(sectionID).classList.add("active");
-
-    if (sectionID === "logs") displayLogs();
-    if (sectionID === "students") displayStudents();
-
-    if (sectionID === "scan") {
-        startScanner();
-    } else {
-        stopScanner();
-    }
-}
-
-document.getElementById("studentForm").addEventListener(
-    "submit",
-    function(event) {
-        event.preventDefault();
-
-        const id = document.getElementById("studentID").value.trim();
-        const name = document.getElementById("studentName").value.trim();
-        const section = document.getElementById("studentSection").value.trim();
-
-        if (students.some(student =>
-            String(student.id).toLowerCase() === id.toLowerCase()
-        )) {
-            alert("Student ID already exists. Please use a unique ID.");
-            return;
-        }
-
-        const student = { id, name, section };
-        students.push(student);
-        saveStudents();
-
-        const qr = document.getElementById("qrcode");
-        qr.innerHTML = "";
-
-        if (typeof QRCode === "undefined") {
-            alert("QR library did not load. Check your internet connection.");
-            return;
-        }
-
-        new QRCode(qr, {
-            text: id,
-            width: 180,
-            height: 180
-        });
-
-        document.getElementById("qrStudentName").textContent =
-            name + " — " + id + " — " + section;
-
-        document.getElementById("qrCard").style.display = "block";
-        this.reset();
-
-        alert("Student registered and QR code generated successfully!");
-    }
-);
-
-async function startScanner() {
-    if (scanner || scannerStarting) return;
-
-    if (typeof Html5QrcodeScanner === "undefined") {
-        showResult(
-            "Scanner library did not load. Check your internet connection.",
-            false
-        );
+    if(typeof QRCode==="undefined"){
+        alert("QR generator did not load. Check your internet connection.");
         return;
     }
 
-    scannerStarting = true;
+    students.push({id,name,section});
+    saveStudents();
 
-    try {
-        scanner = new Html5QrcodeScanner(
-            "reader",
-            {
-                fps: 10,
-                qrbox: { width: 230, height: 230 }
+    const qr=document.getElementById("qrcode");
+    qr.innerHTML="";
+    new QRCode(qr,{text:id,width:190,height:190});
+
+    document.getElementById("qrStudentName").textContent=name+" | "+id+" | "+section;
+    document.getElementById("qrCard").hidden=false;
+    this.reset();
+    displayStudents();
+    alert("Student registered and QR code generated!");
+});
+
+function printQR(){
+    const content=document.getElementById("qrCard");
+    if(content.hidden)return;
+    const w=window.open("","_blank");
+    if(!w){alert("Allow pop-ups to print the QR code.");return;}
+    w.document.write("<html><head><title>Student QR Code</title></head><body style='font-family:Arial;text-align:center;padding:25px'>");
+    w.document.write("<h2>RDCAS Student QR Code</h2>");
+    w.document.write("<p>"+escapeHTML(document.getElementById("qrStudentName").textContent)+"</p>");
+    const canvas=content.querySelector("canvas");
+    const img=content.querySelector("img");
+    if(canvas)w.document.write("<img src='"+canvas.toDataURL()+"'>");
+    else if(img)w.document.write("<img src='"+img.src+"'>");
+    w.document.write("</body></html>");
+    w.document.close();w.focus();
+    setTimeout(()=>w.print(),300);
+}
+
+function escapeHTML(text){
+    return String(text).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+// Camera scanner. Requires HTTPS and browser camera permission.
+async function startScanner(){
+    if(scanner||starting)return;
+    if(!window.isSecureContext&&location.hostname!=="localhost"){
+        message("Camera needs a secure HTTPS website. Open the GitHub Pages link starting with https://.","bad");
+        return;
+    }
+    if(typeof Html5Qrcode==="undefined"){
+        message("Scanner library did not load. Check your internet connection and reload.","bad");
+        return;
+    }
+
+    starting=true;
+    document.getElementById("startButton").disabled=true;
+
+    try{
+        const cameras=await Html5Qrcode.getCameras();
+        if(!cameras||!cameras.length){
+            message("No camera found. Check your phone camera and browser permissions.","bad");
+            return;
+        }
+
+        scanner=new Html5Qrcode("reader");
+        message("Starting camera. Allow camera access if your browser asks.","info");
+
+        const preferred=cameras.find(c=>/back|rear|environment/i.test(c.label));
+        const cameraId=preferred?preferred.id:cameras[cameras.length-1].id;
+
+        await scanner.start(
+            cameraId,
+            {fps:10,qrbox:{width:220,height:220},aspectRatio:1},
+            decodedText=>{
+                const id=String(decodedText).trim();
+                const now=Date.now();
+                if(id===lastID&&now-lastTime<4000)return;
+                lastID=id;lastTime=now;
+                verifyStudent(id);
             },
-            false
+            ()=>{}
         );
-
-        scanner.render(
-            function(decodedText) {
-                const scannedID = String(decodedText).trim();
-                const now = Date.now();
-
-                if (scannedID === lastScannedId &&
-                    now - lastScannedAt < 4000) {
-                    return;
-                }
-
-                lastScannedId = scannedID;
-                lastScannedAt = now;
-
-                verifyStudent(scannedID);
-            },
-            function() {}
-        );
-
-    } catch (error) {
-        scanner = null;
-        showResult(
-            "Unable to start scanner. Allow camera permission and try again.",
-            false
-        );
-    } finally {
-        scannerStarting = false;
+        message("Camera is ready. Point it at the student's QR code.","info");
+    }catch(err){
+        console.error("Camera error:",err);
+        if(scanner){
+            try{await scanner.clear();}catch(e){}
+            scanner=null;
+        }
+        const name=String(err&&err.name||"");
+        if(name==="NotAllowedError"||name==="PermissionDeniedError"){
+            message("Camera permission was denied. Open Chrome site settings > Camera > Allow, then reload this page.","bad");
+        }else if(name==="NotFoundError"){
+            message("No camera was found on this device.","bad");
+        }else if(name==="NotReadableError"){
+            message("The camera may be used by another app. Close that app and try again.","bad");
+        }else{
+            message("Camera could not start. Allow camera permission in browser settings, then reload the website. Error: "+String(err.message||err),"bad");
+        }
+    }finally{
+        starting=false;
+        document.getElementById("startButton").disabled=false;
     }
 }
 
-function stopScanner() {
-    if (scanner) {
-        const currentScanner = scanner;
-        scanner = null;
-
-        try {
-            currentScanner.clear();
-        } catch (error) {}
-    }
+async function stopScanner(){
+    if(!scanner)return;
+    const current=scanner;
+    scanner=null;
+    try{
+        if(current.isScanning)await current.stop();
+    }catch(e){}
+    try{await current.clear();}catch(e){}
 }
 
-function showResult(message, valid) {
-    const result = document.getElementById("verificationResult");
-    result.className = "verification " + (valid ? "verified" : "invalid");
-    result.style.display = "block";
-    result.textContent = message;
-}
+function verifyStudent(id){
+    const student=students.find(s=>String(s.id)===id);
+    const now=new Date();
 
-function verifyStudent(studentID) {
-    const student = students.find(
-        student => String(student.id) === studentID
-    );
-
-    const now = new Date();
-
-    if (student) {
-        showResult(
-            "✓ VERIFIED — " + student.name +
-            " | ID: " + student.id +
-            " | " + student.section +
-            ". Attendance recorded.",
-            true
-        );
-
-        addLog(student, "ATTENDANCE", "VERIFIED", now);
-
-    } else {
-        showResult(
-            "✕ INVALID — This QR code is not registered. " +
-            "No student attendance was recorded.",
-            false
-        );
-
-        addLog({
-            id: studentID,
-            name: "Unknown Student",
-            section: "—"
-        }, "SCAN", "INVALID", now);
+    if(student){
+        message("VERIFIED: "+student.name+" | "+student.id+" | "+student.section+" — Attendance recorded.","ok");
+        addLog(student,"ATTENDANCE","VERIFIED",now);
+    }else{
+        message("INVALID QR: This Student ID is not registered. No attendance recorded.","bad");
+        addLog({id:id,name:"Unknown Student",section:"—"},"SCAN","INVALID",now);
     }
-
     displayLogs();
 }
 
-function addLog(student, action, status, dateObj) {
-    const date = dateObj || new Date();
-
+function addLog(student,action,status,date){
     logs.push({
-        id: String(student.id ?? ""),
-        name: String(student.name ?? ""),
-        section: String(student.section ?? "—"),
-        action,
-        status,
-        date: date.toLocaleDateString("en-CA"),
-        time: date.toLocaleTimeString()
+        id:String(student.id||""),
+        name:String(student.name||""),
+        section:String(student.section||"—"),
+        action,status,
+        date:date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0")+"-"+String(date.getDate()).padStart(2,"0"),
+        time:date.toLocaleTimeString()
     });
-
     saveLogs();
 }
 
-function displayStudents() {
-    const table = document.getElementById("studentTable");
-    const searchInput = document.getElementById("studentSearch");
-    if (!table || !searchInput) return;
+function displayStudents(){
+    const table=document.getElementById("studentTable");
+    if(!table)return;
+    table.innerHTML="";
+    const query=(document.getElementById("studentSearch").value||"").trim().toLowerCase();
+    const found=students.filter(s=>String(s.id).toLowerCase().includes(query)||String(s.name).toLowerCase().includes(query));
 
-    const search = searchInput.value.trim().toLowerCase();
-    table.innerHTML = "";
-
-    const filtered = students.filter(student =>
-        String(student.id || "").toLowerCase().includes(search) ||
-        String(student.name || "").toLowerCase().includes(search)
-    );
-
-    if (filtered.length === 0) {
-        table.innerHTML =
-            '<tr><td colspan="4">No student records found.</td></tr>';
+    if(!found.length){
+        table.innerHTML="<tr><td colspan='4'>No student records found.</td></tr>";
         return;
     }
-
-    filtered.forEach(student => {
-        const row = document.createElement("tr");
-
-        [student.id, student.name, student.section].forEach(value => {
-            const cell = document.createElement("td");
-            cell.textContent = value || "";
-            row.appendChild(cell);
+    found.forEach(s=>{
+        const tr=document.createElement("tr");
+        [s.id,s.name,s.section].forEach(value=>{
+            const td=document.createElement("td");td.textContent=value;tr.appendChild(td);
         });
-
-        const actionCell = document.createElement("td");
-        const deleteButton = document.createElement("button");
-
-        deleteButton.type = "button";
-        deleteButton.textContent = "Delete";
-        deleteButton.style.background = "#c62828";
-        deleteButton.style.color = "white";
-        deleteButton.style.border = "none";
-        deleteButton.style.padding = "9px 12px";
-        deleteButton.style.borderRadius = "6px";
-        deleteButton.style.cursor = "pointer";
-        deleteButton.onclick = () => deleteStudent(student.id);
-
-        actionCell.appendChild(deleteButton);
-        row.appendChild(actionCell);
-        table.appendChild(row);
+        const td=document.createElement("td");
+        const btn=document.createElement("button");
+        btn.textContent="Delete";btn.style.background="#b71c1c";btn.style.color="white";
+        btn.onclick=()=>{
+            if(confirm("Delete student "+s.name+" ("+s.id+")?")){
+                students=students.filter(x=>String(x.id)!==String(s.id));
+                saveStudents();displayStudents();
+            }
+        };
+        td.appendChild(btn);tr.appendChild(td);table.appendChild(tr);
     });
 }
 
-function deleteStudent(studentID) {
-    const student = students.find(
-        item => String(item.id) === String(studentID)
-    );
+function displayLogs(){
+    const table=document.getElementById("logTable");
+    if(!table)return;
+    table.innerHTML="";
+    const date=document.getElementById("dateFilter").value;
+    const query=document.getElementById("searchFilter").value.trim().toLowerCase();
+    const found=logs.filter(l=>(!date||l.date===date)&&(!query||String(l.id).toLowerCase().includes(query)||String(l.name).toLowerCase().includes(query))).slice().reverse();
 
-    if (!student) {
-        alert("Student record not found.");
+    if(!found.length){
+        table.innerHTML="<tr><td colspan='7'>No attendance records found.</td></tr>";
         return;
     }
-
-    const confirmed = confirm(
-        "Are you sure you want to delete this student?\n\n" +
-        "Student ID: " + student.id + "\n" +
-        "Name: " + student.name + "\n\n" +
-        "This cannot be undone. Existing attendance logs will remain."
-    );
-
-    if (!confirmed) return;
-
-    students = students.filter(
-        item => String(item.id) !== String(studentID)
-    );
-
-    saveStudents();
-    displayStudents();
-    alert("Student record deleted successfully.");
-}
-
-function displayLogs() {
-    const table = document.getElementById("logTable");
-    if (!table) return;
-
-    table.innerHTML = "";
-
-    const dateQuery = document.getElementById("dateFilter").value;
-    const searchQuery = document.getElementById("searchFilter")
-        .value.trim().toLowerCase();
-
-    const filtered = logs.filter(log => {
-        const dateMatch = !dateQuery || log.date === dateQuery;
-        const searchMatch =
-            !searchQuery ||
-            String(log.id).toLowerCase().includes(searchQuery) ||
-            String(log.name).toLowerCase().includes(searchQuery);
-
-        return dateMatch && searchMatch;
-    }).slice().reverse();
-
-    if (filtered.length === 0) {
-        table.innerHTML =
-            '<tr><td colspan="7">No attendance records found.</td></tr>';
-        return;
-    }
-
-    filtered.forEach(log => {
-        const row = document.createElement("tr");
-
-        [
-            log.id,
-            log.name,
-            log.section || "—",
-            log.action,
-            log.status,
-            log.date || "",
-            log.time || ""
-        ].forEach(value => {
-            const cell = document.createElement("td");
-            cell.textContent = value || "";
-            row.appendChild(cell);
+    found.forEach(l=>{
+        const tr=document.createElement("tr");
+        [l.id,l.name,l.section,l.action,l.status,l.date,l.time].forEach(value=>{
+            const td=document.createElement("td");td.textContent=value||"";tr.appendChild(td);
         });
-
-        table.appendChild(row);
+        table.appendChild(tr);
     });
 }
 
-document.getElementById("dateFilter")
-    .addEventListener("change", displayLogs);
+document.getElementById("dateFilter").addEventListener("change",displayLogs);
+document.getElementById("searchFilter").addEventListener("input",displayLogs);
 
-document.getElementById("searchFilter")
-    .addEventListener("input", displayLogs);
-
-function clearFilters() {
-    document.getElementById("dateFilter").value = "";
-    document.getElementById("searchFilter").value = "";
+function clearFilters(){
+    document.getElementById("dateFilter").value="";
+    document.getElementById("searchFilter").value="";
     displayLogs();
 }
 
-function exportLogs() {
-    if (logs.length === 0) {
-        alert("There are no logs to download yet.");
-        return;
-    }
-
-    const rows = [[
-        "Student ID / LRN",
-        "Student Name",
-        "Grade & Section",
-        "Action",
-        "Status",
-        "Date",
-        "Time"
-    ]];
-
-    logs.forEach(log => {
-        rows.push([
-            log.id,
-            log.name,
-            log.section || "",
-            log.action,
-            log.status,
-            log.date || "",
-            log.time || ""
-        ]);
-    });
-
-    const csv = rows.map(row =>
-        row.map(value =>
-            '"' + String(value ?? "").replace(/"/g, '""') + '"'
-        ).join(",")
-    ).join("\r\n");
-
-    const blob = new Blob(
-        ["\uFEFF" + csv],
-        { type: "text/csv;charset=utf-8;" }
-    );
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = "RDCAS_Attendance_Logs.csv";
-    link.click();
-
-    URL.revokeObjectURL(url);
+function exportLogs(){
+    if(!logs.length){alert("No attendance logs to download yet.");return;}
+    const rows=[["Student ID","Student Name","Section","Action","Status","Date","Time"]];
+    logs.forEach(l=>rows.push([l.id,l.name,l.section,l.action,l.status,l.date,l.time]));
+    const csv=rows.map(row=>row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
+    const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;a.download="RDCAS_Attendance_Logs.csv";a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
+displayStudents();
 displayLogs();
 </script>
-
 </body>
 </html>
